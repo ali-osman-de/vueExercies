@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onUnmounted, onMounted } from 'vue'
 
 const count = ref(0)
 const score = ref(0)
@@ -9,8 +9,13 @@ const QuestionsAnswersArr = ref([
   { q: "3+3", a: "6" },
   { q: "6+3", a: "9" },
 ])
+let intervalId = null
 
-const currentQuestion = computed(() => {
+onMounted(() => {
+  intervalId = setInterval(check, 4000)
+})
+
+const questions = computed(() => {
   return QuestionsAnswersArr.value[count.value].q
 })
 
@@ -19,26 +24,25 @@ const rightAnswer = computed(() => {
 })
 
 const areWeDone = computed(() => {
-  return count.value >= QuestionsAnswersArr.value.length
+  return count.value >= QuestionsAnswersArr.value.length;
 })
 
-let intervalId: number | undefined;
-
 const check = () => {
-  if (areWeDone.value) {
-    clearInterval(intervalId)
-    return;
+  console.log('checked!');
+
+  if (rightAnswer.value === userAnswer.value) {
+    score.value++
   }
-  if (userAnswer.value === rightAnswer.value) {
-    score.value++;
-    count.value++;
-    userAnswer.value = '';
-  }
+  count.value++
+  userAnswer.value = ''
+
 }
 
-intervalId = setInterval(() => {
-  check()
-}, 4000)
+onUnmounted(() => {
+  if (areWeDone.value) {
+    clearInterval(intervalId)
+  }
+})
 
 </script>
 
@@ -49,7 +53,7 @@ intervalId = setInterval(() => {
   </div>
 
   <div class="card" v-if="!areWeDone">
-    <p>{{ currentQuestion }}</p>
+    <p>{{ questions }}</p>
     <input type="text" v-model="userAnswer">
   </div>
 </template>
