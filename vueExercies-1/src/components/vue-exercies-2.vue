@@ -37,6 +37,10 @@ const addFavorite = (id) => {
     return fav.isFavorite = true
 }
 
+const removePhotos = (index) => {
+    imageArr.value.splice(index,1)
+    howManyFavorite.value--
+}
 
 
 </script>
@@ -56,6 +60,7 @@ const addFavorite = (id) => {
                 <span v-if="item.isFavorite === true">Favoride</span>
                 <span v-else></span>
                 <button @click="addFavorite(item.id)">Favoriye ekle</button>
+                <button @click="removePhotos(index)">Sil</button>
             </div>
         </div>
 
